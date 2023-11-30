@@ -130,17 +130,18 @@ export default class Node {
       ? validChildren.every(child => child.checked)
       : false;
 
-    this.setCheckState(checked);
+    this.setCheckState(checked, true);
   }
 
-  setCheckState(checked) {
+  setCheckState(checked, fromEvent) {
     const totalNum = this.children.length;
     const checkedNum = this.children.reduce((c, p) => {
       const num = p.checked ? 1 : (p.indeterminate ? 0.5 : 0);
       return c + num;
     }, 0);
-
-    this.checked = checked;
+    if (!fromEvent || checked) {
+      this.checked = checked;
+    }
     this.indeterminate = checkedNum !== totalNum && checkedNum > 0;
   }
 
@@ -153,14 +154,14 @@ export default class Node {
 
   doCheck(checked) {
     if (this.checked !== checked) {
-      if (this.config.checkStrictly) {
-        this.checked = checked;
-      } else {
-        // bottom up to unify the calculation of the indeterminate state
-        this.broadcast('check', checked);
-        this.setCheckState(checked);
-        this.emit('check');
-      }
+      // if (this.config.checkStrictly) {
+      // this.checked = checked;
+      // } else {
+      // bottom up to unify the calculation of the indeterminate state
+      this.broadcast('check', checked);
+      this.setCheckState(checked);
+      this.emit('check');
+      // }
     }
   }
 }
