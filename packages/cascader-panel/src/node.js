@@ -126,8 +126,9 @@ export default class Node {
   onChildCheck() {
     const { children } = this;
     const validChildren = children.filter(child => !child.isDisabled);
+    // 没有半选的概念，只要子级有一个被选中即认为父级被选中
     const checked = validChildren.length
-      ? validChildren.every(child => child.checked)
+      ? validChildren.some(child => child.checked)
       : false;
 
     this.setCheckState(checked, true);
@@ -139,10 +140,15 @@ export default class Node {
       const num = p.checked ? 1 : (p.indeterminate ? 0.5 : 0);
       return c + num;
     }, 0);
+    // 父级可以控制子级，但是不受子级控制
     if (!fromEvent || checked) {
       this.checked = checked;
     }
-    this.indeterminate = checkedNum !== totalNum && checkedNum > 0;
+    // 没有半选的概念，只要子级有一个被选中即认为父级被选中
+    const indeterminate = checkedNum !== totalNum && checkedNum > 0;
+    if (indeterminate) {
+      this.checked = true;
+    }
   }
 
   syncCheckState(checkedValue) {
