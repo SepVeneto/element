@@ -125,7 +125,8 @@ export default {
       return this.config.checkStrictly;
     },
     leafOnly() {
-      return !this.checkStrictly;
+      // return !this.checkStrictly;
+      return false;
     },
     isHoverMenu() {
       return this.config.expandTrigger === 'hover';
