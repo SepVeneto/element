@@ -1,6 +1,7 @@
 <script>
 import ElScrollbar from 'element-ui/packages/scrollbar';
 import CascaderNode from './cascader-node.vue';
+import CascaderNodeAll from './cascader-node.all.vue';
 import Locale from 'element-ui/src/mixins/locale';
 import { generateId } from 'element-ui/src/utils/util';
 
@@ -13,7 +14,8 @@ export default {
 
   components: {
     ElScrollbar,
-    CascaderNode
+    CascaderNode,
+    CascaderNodeAll
   },
 
   props: {
@@ -33,6 +35,20 @@ export default {
   },
 
   computed: {
+    config() {
+      return this.panel.config;
+    },
+    checkedList() {
+      if (!this.config.needAll) return [];
+      const checkedValue = this.panel.checkedValue;
+      return this.nodes.filter(node => node.isSameNode(checkedValue));
+    },
+    isCheckedAll() {
+      return this.checkedList.length === this.nodes.length;
+    },
+    isIndeterminate() {
+      return this.checkedList.length > 0 && this.checkedList.length < this.nodes.length;
+    },
     isEmpty() {
       return !this.nodes.length;
     },
@@ -73,7 +89,9 @@ export default {
       if (!hoverZone) return;
       hoverZone.innerHTML = '';
     },
-
+    onChange(checked) {
+      this.nodes.forEach(node => node.doCheck(checked));
+    },
     renderEmptyText(h) {
       return (
         <div class="el-cascader-menu__empty-text">{ this.t('el.cascader.noData') }</div>
@@ -102,6 +120,12 @@ export default {
       });
 
       return [
+        this.config.needAll && <CascaderNodeAll
+          value={this.isCheckedAll}
+          indeterminate={this.isIndeterminate}
+          node-id={ `${menuId}--1` }
+          onChange={this.onChange}
+        />,
         ...nodes,
         isHoverMenu ? <svg ref='hoverZone' class='el-cascader-menu__hover-zone'></svg> : null
       ];
