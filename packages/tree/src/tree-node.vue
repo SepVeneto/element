@@ -37,7 +37,7 @@
       <el-checkbox
         v-if="showCheckbox"
         v-model="node.checked"
-        :indeterminate="node.indeterminate"
+        :indeterminate="sideControl ? false : node.indeterminate"
         :disabled="!!node.disabled"
         @click.native.stop
         @change="handleCheckChange"
@@ -99,7 +99,8 @@
       showCheckbox: {
         type: Boolean,
         default: false
-      }
+      },
+      sideControl: Boolean,
     },
 
     components: {

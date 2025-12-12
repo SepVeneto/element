@@ -22,7 +22,7 @@ export const getChildState = node => {
   return { all, none, allWithoutDisable, half: !all && !none };
 };
 
-const reInitChecked = function(node) {
+const reInitChecked = function(node, sideControl) {
   if (node.childNodes.length === 0 || node.loading) return;
 
   const {all, none, half} = getChildState(node.childNodes);
@@ -30,8 +30,13 @@ const reInitChecked = function(node) {
     node.checked = true;
     node.indeterminate = false;
   } else if (half) {
-    node.checked = false;
-    node.indeterminate = true;
+    if (sideControl) {
+      node.checked = true;
+      node.indeterminate = false;
+    } else {
+      node.checked = false;
+      node.indeterminate = true;
+    }
   } else if (none) {
     node.checked = false;
     node.indeterminate = false;
@@ -402,7 +407,7 @@ export default class Node {
     if (!parent || parent.level === 0) return;
 
     if (!recursion) {
-      reInitChecked(parent);
+      reInitChecked(parent, this.store.sideControl);
     }
   }
 

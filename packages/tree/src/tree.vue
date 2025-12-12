@@ -15,6 +15,7 @@
       :props="props"
       :render-after-expand="renderAfterExpand"
       :show-checkbox="showCheckbox"
+      :side-control="sideControl"
       :key="getNodeKey(child)"
       :render-content="renderContent"
       @node-expand="handleNodeExpand">
@@ -64,6 +65,8 @@
     },
 
     props: {
+      sideControl: Boolean,
+      immediateStrictly: Boolean,
       data: {
         type: Array
       },
@@ -328,6 +331,7 @@
         lazy: this.lazy,
         props: this.props,
         load: this.load,
+        sideControl: this.sideControl,
         currentNodeKey: this.currentNodeKey,
         checkStrictly: this.checkStrictly,
         checkDescendants: this.checkDescendants,
