@@ -281,7 +281,8 @@ export default {
       return this.config.multiple;
     },
     leafOnly() {
-      return !this.config.checkStrictly;
+      // return !this.config.checkStrictly;
+      return false;
     },
     readonly() {
       return !this.filterable || this.multiple;
@@ -506,9 +507,44 @@ export default {
       }
       this.presentText = null;
     },
+    pathUnique(nodes) {
+      const res = [];
+      let _nodes = [...nodes];
+      _nodes.sort((a, b) => a.path.length - b.path.length);
+      let first = 0;
+      let second = 0;
+      let fNode = _nodes[first];
+      let sNode = _nodes[second];
+      while (fNode) {
+        // sNode = _nodes[second++];
+        // if (sNode.path.length <= fNode.path.length) continue;
+        let isUnique = false;
+        while (sNode) {
+          sNode = _nodes[++second];
+          if (!sNode) {
+            break;
+          }
+          const isMatch = fNode.path.every(item => sNode.path.includes(item));
+          if (isMatch) {
+            isUnique = false;
+            break;
+          } else {
+            isUnique = true;
+          }
+        }
+        if (isUnique) {
+          res.push(fNode);
+        }
+        fNode = _nodes[++first];
+        second = first;
+        sNode = _nodes[second];
+      }
+      res.push(..._nodes.slice(-1));
+      return res;
+    },
     computePresentTags() {
       const { isDisabled, leafOnly, showAllLevels, separator, collapseTags } = this;
-      const checkedNodes = this.getCheckedNodes(leafOnly);
+      const checkedNodes = this.pathUnique(this.getCheckedNodes(leafOnly));
       const tags = [];
 
       const genTag = node => ({
