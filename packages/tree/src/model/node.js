@@ -407,7 +407,11 @@ export default class Node {
     if (!parent || parent.level === 0) return;
 
     if (!recursion) {
-      reInitChecked(parent, this.store.sideControl);
+      if (this.store.sideControl) {
+        value && reInitChecked(parent, this.store.sideControl);
+      } else {
+        reInitChecked(parent, this.store.sideControl);
+      }
     }
   }
 

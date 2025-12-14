@@ -1,7 +1,9 @@
 <template>
   <div>
   <button @click="cs = !cs">click me {{ cs }}</button>
+  <button @click="getSelected">get</button>
   <el-tree
+    ref="tree"
     :data="data"
     show-checkbox
     node-key="id"
@@ -16,6 +18,11 @@
 
 <script>
   export default {
+    methods: {
+      getSelected() {
+        console.log(this.$refs.tree)
+      }
+    },
     data() {
       return {
         cs: true,
